@@ -3,26 +3,28 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
-  TextInput,
   Image,
   FlatList
 } from 'react-native';
 
 import GoalItem from './components/GoalItem';
+import GoalInput from './components/GoalInput';
 
 export default function App() {
 
-  const [enteredGoalText, setEnteredGoalText] = useState('');
   const [goalList, setGoalList] = useState([]);
 
-  function goalInputHandler(enteredText) {
-    setEnteredGoalText(enteredText);
+  function addGoalHandler(enteredGoalText) {
+    setGoalList(currentGoalList => [...currentGoalList, { text: enteredGoalText, id: Math.random().toString() }]);
+    console.log(goalList);
   };
 
-  function addGoalHandler() {
-    setGoalList(currentGoalList => [...currentGoalList, { text: enteredGoalText, key: Math.random().toString() }]);
-  };
+  function deletGoalHandler(id) {
+    console.log('DELETE' + id);
+    setGoalList(currentGoalList => {
+      return currentGoalList.filter((goal) => goal.id !== id)
+    });
+  }
 
   return (
     <View style={styles.appContainer}>
@@ -37,17 +39,9 @@ export default function App() {
         </Text>
       </View>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder='Type your goal...'
-          style={styles.textInput}
-          onChangeText={goalInputHandler}
-        />
-        <Button title='Add Goal' onPress={addGoalHandler} />
-      </View>
+      <GoalInput onAddGoal={addGoalHandler} />
 
       <View style={styles.goalsContainer}>
-
         <View>
           <Text style={styles.goalTitleText}>
             ⭐ My Goals
@@ -58,14 +52,15 @@ export default function App() {
           <FlatList
             data={goalList}
             renderItem={itemData => {
-              return <GoalItem text={itemData.item.text} />;
+              return <GoalItem
+                text={itemData.item.text}
+                id={itemData.item.id}
+                onDeleteItem={deletGoalHandler}
+              />;
             }}
             fadingEdgeLength={50} />
-
         </View>
-
       </View>
-
     </View>
   );
 }
