@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, View, TextInput, Button } from "react-native"
+import { StyleSheet, View, TextInput, Button, Modal, Text } from "react-native"
 
 function GoalInput(props) {
 
@@ -12,19 +12,39 @@ function GoalInput(props) {
     function addGoalHandler() {
         props.onAddGoal(enteredGoalText);
         setEnteredGoalText('');
-        
     };
 
+    function closeModalHandler() {
+        props.onCloseModal();
+    }
+
     return (
-        <View style={styles.inputContainer}>
-            <TextInput
-                placeholder='Type your goal...'
-                style={styles.textInput}
-                onChangeText={goalInputHandler}
-                value={enteredGoalText}
-            />
-            <Button title='Add Goal' onPress={addGoalHandler} />
-        </View>
+        <Modal visible={props.visible} animationType='slide'>
+
+
+            <View style={styles.inputContainer}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleContainerText}>
+                        Adding new Goal
+                    </Text>
+                </View>
+
+                <TextInput
+                    placeholder='Type your goal...'
+                    style={styles.textInput}
+                    onChangeText={goalInputHandler}
+                    value={enteredGoalText}
+                />
+                <View style={styles.buttonContainer}>
+                    <View style={styles.myButton}>
+                        <Button title='Cancel' color='red' onPress={closeModalHandler} />
+                    </View>
+                    <View style={styles.myButton}>
+                        <Button title='Add Goal' onPress={addGoalHandler} color='green' />
+                    </View>
+                </View>
+            </View>
+        </Modal>
     )
 }
 
@@ -33,23 +53,54 @@ export default GoalInput;
 const styles = StyleSheet.create({
 
     inputContainer: {
-        height: 60,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        borderBottomWidth: 1,
         borderBottomColor: '#aaaaaa',
+        padding: 16,
+        backgroundColor: '#0a2929',
+    },
+
+    
+    titleContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10,
+    },
+
+    titleContainerText: {
+        fontSize: 25,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: '#99e6e6',
     },
 
     textInput: {
         borderWidth: 1,
+        borderRadius: 3,
         borderColor: '#aaaaaa',
-        width: '70%',
-        marginRight: 10,
-        backgroundColor: '#FFE6E6',
+        width: '100%',
+        color: '#051414',
+        backgroundColor: '#99e6e6',
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 6,
+        margin: 8,
     },
+
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        // borderWidth: 1,
+        width: '100%',
+        marginTop: 8,
+    },
+
+    myButton: {
+        width: '40%',
+        // paddingHorizontal: 8,
+    },
+
 
 });

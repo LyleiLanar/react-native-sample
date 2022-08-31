@@ -4,8 +4,13 @@ import {
   Text,
   View,
   Image,
-  FlatList
+  FlatList,
+  Button
 } from 'react-native';
+
+import { StatusBar } from 'expo-status-bar';
+
+const logo = require('./assets/goal.png')
 
 import GoalItem from './components/GoalItem';
 import GoalInput from './components/GoalInput';
@@ -13,10 +18,20 @@ import GoalInput from './components/GoalInput';
 export default function App() {
 
   const [goalList, setGoalList] = useState([]);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+
+  function turnOnModalHandler() {
+    setModalIsVisible(true);
+  }
+
+  function turnOffModalHandler() {
+    setModalIsVisible(false);
+  }
 
   function addGoalHandler(enteredGoalText) {
     setGoalList(currentGoalList => [...currentGoalList, { text: enteredGoalText, id: Math.random().toString() }]);
     console.log(goalList);
+    turnOffModalHandler();
   };
 
   function deletGoalHandler(id) {
@@ -27,41 +42,44 @@ export default function App() {
   }
 
   return (
-    <View style={styles.appContainer}>
+    <>
+    <StatusBar style='light'/>
+      <View style={styles.appContainer}>
 
-      <View style={styles.titleContainer}>
-        <Image
-          source={require('./assets/goal.png')}
-          style={styles.titlePicture}
-        />
-        <Text style={styles.titleContainerText}>
-          My App
-        </Text>
-      </View>
-
-      <GoalInput onAddGoal={addGoalHandler} />
-
-      <View style={styles.goalsContainer}>
-        <View>
-          <Text style={styles.goalTitleText}>
-            ⭐ My Goals
+        <View style={styles.titleContainer}>
+          <Image
+            source={logo}
+            style={styles.titlePicture}
+          />
+          <Text style={styles.titleContainerText}>
+            My App
           </Text>
         </View>
+        <Button title='Add goal' color='green' onPress={turnOnModalHandler} />
+        <GoalInput onAddGoal={addGoalHandler} onCloseModal={turnOffModalHandler} visible={modalIsVisible} />
 
-        <View style={styles.goalList}>
-          <FlatList
-            data={goalList}
-            renderItem={itemData => {
-              return <GoalItem
-                text={itemData.item.text}
-                id={itemData.item.id}
-                onDeleteItem={deletGoalHandler}
-              />;
-            }}
-            fadingEdgeLength={50} />
+        <View style={styles.goalsContainer}>
+          <View>
+            <Text style={styles.goalTitleText}>
+            My Goals
+            </Text>
+          </View>
+
+          <View style={styles.goalList}>
+            <FlatList
+              data={goalList}
+              renderItem={itemData => {
+                return <GoalItem
+                  text={itemData.item.text}
+                  id={itemData.item.id}
+                  onDeleteItem={deletGoalHandler}
+                />;
+              }}
+              fadingEdgeLength={50} />
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -72,19 +90,21 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 16,
     height: '100%',
-    backgroundColor: '#F2D1D1',
+    backgroundColor: '#0a2929',
   },
 
   titleContainer: {
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 12,
   },
 
   titleContainerText: {
     fontSize: 25,
     textAlign: 'center',
     fontWeight: 'bold',
+    color: '#99e6e6',
   },
 
   titlePicture: {
@@ -110,6 +130,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
     marginLeft: 4,
+    color: '#99e6e6',
   },
 
   goalList: {
@@ -121,7 +142,7 @@ const styles = StyleSheet.create({
     borderColor: '#aaaaaa',
     width: '70%',
     marginRight: 10,
-    backgroundColor: '#FFE6E6',
+    backgroundColor: '#0a2929',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
